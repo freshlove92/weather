@@ -9,7 +9,7 @@ const WeatherButtonBox = () => {
              <Button variant="warning">밀라노</Button>{' '}
              <Button variant="warning">판티엣</Button>{' '}
         </div>
-    );{' '}
+    );
 };
 
 export default WeatherButtonBox;
