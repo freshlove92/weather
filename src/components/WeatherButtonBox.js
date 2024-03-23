@@ -1,8 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-const WeatherButtonBox = ({ cities }) => {
-    console.log("잘 들어왔나?", cities)
+const WeatherButtonBox = () => {
 
     return (
         <div>

@@ -33,8 +33,7 @@ function App() {
     }
     
 
-    const cities = ['paris', 'new york', 'tokyo', 'seoul'];
-
+    // const cities = ['paris', 'new york', 'tokyo', 'seoul'];
     const [weather, setWeather] = useState()
     const [id, setId] = useState()
 
@@ -48,7 +47,7 @@ function App() {
       <div className='contaier'>
         <WeatherBox weather={weather} id={id} />
         <br/>
-        <WeatherButtonBox cities={cities}/>
+        <WeatherButtonBox/>
       </div>
     </div>
   );
