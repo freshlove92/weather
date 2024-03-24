@@ -3,6 +3,7 @@ import WeatherBox from './components/WeatherBox';
 import WeatherButtonBox from './components/WeatherButtonBox';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ClipLoader from "react-spinners/ClipLoader";
 
 //1. 처음 현재위치 기반 날씨정보 기본제공
 //2. 도시, 섭씨, 화씨, 날씨상태
@@ -20,35 +21,77 @@ function App() {
         let lon = position.coords.longitude
         // console.log("현재위치",lat,lon)
         getWeaterByCurrentLocation(lat, lon)
+        setCity(null);
       });
     }
 
     const getWeaterByCurrentLocation=async(lat, lon)=>{
-      let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=d35034cce3abb9cdd03482bcf781a1cb&units=metric`
-      let response = await fetch(url)
-      let data = await response.json()
-      setId(data.weather[0].id)
-      setWeather(data)
+      try {
+        let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=d35034cce3abb9cdd03482bcf781a1cb&units=metric`
+        setLoading(true)
+        let response = await fetch(url)
+        let data = await response.json()
+        setId(data.weather[0].id)
+        setWeather(data)
+        setLoading(false)
+      } catch (err) {
+        console.log(err)
+        setAPIError(err.message);
+        setLoading(false);
+      }
       // console.log("data", data)
     }
-    
 
-    // const cities = ['paris', 'new york', 'tokyo', 'seoul'];
+    const getWeaterByCity =async()=>{
+      try {
+        let url= `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d35034cce3abb9cdd03482bcf781a1cb&units=metric`
+        setLoading(true)
+        let response = await fetch(url)
+        let data = await response.json()
+        // console.log("뭐가나오나", data)
+        setWeather(data)
+        setLoading(false)
+      } catch (err) {
+        alert( "데이터에 에러가 있어 재요청을 시도합니다." );
+        setAPIError(err.message);
+        setLoading(false);
+      }
+    }
+
+    const cities = ['paris', 'new york', 'tokyo', 'seoul'];
+    const [city, setCity]=useState('')
     const [weather, setWeather] = useState()
     const [id, setId] = useState()
+    const [loading, setLoading]=useState("ture")
+    const [apiError, setAPIError] = useState("");
 
     useEffect(()=>{
-      getCurrentLocation()
-    },[])
-  
+      if (!city){
+        getCurrentLocation();
+      } else {
+        getWeaterByCity();
+        
+      }
+    },[city]);
+
+    //  useEffect(()=>{
+    //     getCurrentLocation();
+    // },[]);
+
+    // useEffect(()=>{
+    //     getWeaterByCity();
+    // },[city]);
 
   return (
     <div>
-      <div className='contaier'>
-        <WeatherBox weather={weather} id={id} />
+      {loading? (<div className='contaier'>
+        <ClipLoader color= "#000" loading={loading} size={150} /></div>) :
+      (<div className='contaier'>
+        <WeatherBox weather={weather} id={id} /> 
         <br/>
-        <WeatherButtonBox/>
+        <WeatherButtonBox cities={cities} setCity={setCity} getCurrentLocation={getCurrentLocation} selectedCity={city}/>
       </div>
+      )}
     </div>
   );
 }
